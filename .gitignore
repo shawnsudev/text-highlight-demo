@@ -1,2 +1,7 @@
-# Ignore macOS resource fork files
+# macOS resource forks
 ._*
+.DS_Store
+
+# Output directories
+output/
+demo/

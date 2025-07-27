@@ -11,7 +11,7 @@ wrap_ratio: 0.85
 background_color: [0.2, 0.2, 0.2]
 text_color: [1.0, 1.0, 1.0]
 # Default highlight colour for variants that don’t override
-default_highlight_color: [0.0, 0.6, 1.0]
+default_highlight_color: [0.5, 1.0, 1.0]
 
 # Base font
 base_font_family: "Arial"
