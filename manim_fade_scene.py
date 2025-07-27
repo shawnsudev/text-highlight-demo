@@ -18,7 +18,6 @@ class ImageFade(Scene):
             raise FileNotFoundError(f"{IMAGE_PATH} not found. Generate image first.")
 
         img = ImageMobject(str(IMAGE_PATH))
-        img.set_resampling_algorithm(RESAMPLING_ALGEBRAIC)
         # Auto scale based on width of scene
         img.set(width=OUTPUT_RESOLUTION[0] * 0.9)
         self.camera.background_color = (0, 0, 0, 0)  # transparent background
