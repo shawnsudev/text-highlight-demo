@@ -1,0 +1,22 @@
+# 🏗️ Video pipeline configuration for manim + ffmpeg
+
+# Source PNG (transparent background, highlighted text)
+png_path: "output/demo/demo_color.png"  # update path if necessary
+
+# Output video
+output_video: "output/final_video.mp4"
+
+# Video properties
+width: 1920
+height: 1080
+fps: 30
+total_duration: 10          # seconds
+fade_in_duration: 1.5       # seconds
+fade_out_duration: 1.5      # seconds
+
+# Codec settings
+codec: "libx265"
+
+# Easing functions (easein, easeout, easeinout, linear)
+easing_in: "easeout"   # easing for fade-in
+easing_out: "easein"   # easing for fade-out
