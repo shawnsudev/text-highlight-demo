@@ -42,16 +42,16 @@ from gi.repository import Pango, PangoCairo  # type: ignore
 import yaml
 from datetime import datetime
 
-# Canvas/settings
-CANVAS_WIDTH = 1920
-CANVAS_HEIGHT = 1080
-WRAP_RATIO = 0.92
-WRAP_WIDTH = int(CANVAS_WIDTH * WRAP_RATIO)
-BACKGROUND_COLOR = (0.2, 0.2, 0.2)
-TEXT_COLOR = (1.0, 1.0, 1.0)
-DEFAULT_HIGHLIGHT_COLOR = (0.0, 0.6, 1.0)  # blue
-BASE_FONT_FAMILY = "Arial"
-BASE_FONT_SIZE_PT = 100
+# Canvas/settings – populated from YAML config
+CANVAS_WIDTH: int
+CANVAS_HEIGHT: int
+WRAP_RATIO: float
+WRAP_WIDTH: int
+BACKGROUND_COLOR: Tuple[float, float, float]
+TEXT_COLOR: Tuple[float, float, float]
+DEFAULT_HIGHLIGHT_COLOR: Tuple[float, float, float]
+BASE_FONT_FAMILY: str
+BASE_FONT_SIZE_PT: int
 
 
 # ---------------------------------------------------------------------------
@@ -113,8 +113,8 @@ def render(markup: str, output: Path) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sentence", required=True)
-    ap.add_argument("--highlight", required=True)
+    ap.add_argument("--sentence")
+    ap.add_argument("--highlight")
     ap.add_argument("--basename", default="demo")
     ap.add_argument("--config", default="config.yml", help="YAML configuration file")
     args = ap.parse_args()
@@ -154,7 +154,14 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Sentence / highlight ------------------------------------------------
-    sent, phrase = args.sentence, args.highlight
+    if args.sentence and args.highlight:
+        sent, phrase = args.sentence, args.highlight
+    else:
+        text_cfg = cfg.get("text") or {}
+        sent = text_cfg.get("base")
+        phrase = text_cfg.get("highlight")
+        if not (sent and phrase):
+            ap.error("Provide --sentence/--highlight or set text.base and text.highlight in config.yaml")
     stem = Path(args.basename).stem
 
     # Variants ------------------------------------------------------------
