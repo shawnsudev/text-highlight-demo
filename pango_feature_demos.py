@@ -39,6 +39,9 @@ gi.require_version("Pango", "1.0")
 gi.require_version("PangoCairo", "1.0")
 from gi.repository import Pango, PangoCairo  # type: ignore
 
+import yaml
+from datetime import datetime
+
 # Canvas/settings
 CANVAS_WIDTH = 1920
 CANVAS_HEIGHT = 1080
@@ -113,27 +116,71 @@ def main() -> None:
     ap.add_argument("--sentence", required=True)
     ap.add_argument("--highlight", required=True)
     ap.add_argument("--basename", default="demo")
+    ap.add_argument("--config", default="config.yml", help="YAML configuration file")
     args = ap.parse_args()
 
-    base = Path(args.basename)
-    stem = base.stem
-    parent = base.parent
+    # Load configuration --------------------------------------------------
+    cfg_path = Path(args.config)
+    if cfg_path.exists():
+        with cfg_path.open() as f:
+            cfg = yaml.safe_load(f) or {}
+    else:
+        cfg = {}
+
+    # Apply config overrides to globals -----------------------------------
+    global CANVAS_WIDTH, CANVAS_HEIGHT, WRAP_RATIO, WRAP_WIDTH
+    global BACKGROUND_COLOR, TEXT_COLOR, DEFAULT_HIGHLIGHT_COLOR
+    global BASE_FONT_FAMILY, BASE_FONT_SIZE_PT
+
+    CANVAS_WIDTH = cfg.get("canvas_width", CANVAS_WIDTH)
+    CANVAS_HEIGHT = cfg.get("canvas_height", CANVAS_HEIGHT)
+    WRAP_RATIO = cfg.get("wrap_ratio", WRAP_RATIO)
+    WRAP_WIDTH = int(CANVAS_WIDTH * WRAP_RATIO)
+
+    BACKGROUND_COLOR = tuple(cfg.get("background_color", BACKGROUND_COLOR))  # type: ignore[arg-type]
+    TEXT_COLOR = tuple(cfg.get("text_color", TEXT_COLOR))  # type: ignore[arg-type]
+    DEFAULT_HIGHLIGHT_COLOR = tuple(cfg.get("default_highlight_color", DEFAULT_HIGHLIGHT_COLOR))  # type: ignore[arg-type]
+    BASE_FONT_FAMILY = cfg.get("base_font_family", BASE_FONT_FAMILY)
+    BASE_FONT_SIZE_PT = cfg.get("base_font_size_pt", BASE_FONT_SIZE_PT)
+
+    # Determine output directory -----------------------------------------
+    output_root = Path(cfg.get("output_dir", "output"))
+    mode = cfg.get("output_dir_mode", "timestamped")
+    if mode == "timestamped":
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        output_dir = output_root / timestamp
+    else:
+        output_dir = output_root
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Sentence / highlight ------------------------------------------------
     sent, phrase = args.sentence, args.highlight
+    stem = Path(args.basename).stem
 
-    variants = [
-        ("color", {}, (0.0, 0.6, 1.0)),
-        ("size", {"size": str(int(BASE_FONT_SIZE_PT*1.4*1024))}, DEFAULT_HIGHLIGHT_COLOR),
-        ("family", {"font_family": "Courier New"}, DEFAULT_HIGHLIGHT_COLOR),
-        ("weight", {"weight": "bold"}, DEFAULT_HIGHLIGHT_COLOR),
-        ("style", {"style": "italic"}, DEFAULT_HIGHLIGHT_COLOR),
-        ("underline", {"underline": "single"}, DEFAULT_HIGHLIGHT_COLOR),
-        ("strike", {"strikethrough": "true"}, DEFAULT_HIGHLIGHT_COLOR),
-        ("rise", {"rise": "10000"}, DEFAULT_HIGHLIGHT_COLOR),  # 10k Pango units ≈ 10px
-    ]
+    # Variants ------------------------------------------------------------
+    variants_cfg = cfg.get("variants")
+    if variants_cfg:
+        variants = []
+        for suffix, detail in variants_cfg.items():
+            extra_attrs = detail.get("extra_attrs", {})
+            color = tuple(detail.get("highlight_color", DEFAULT_HIGHLIGHT_COLOR))  # type: ignore[arg-type]
+            variants.append((suffix, extra_attrs, color))
+    else:
+        variants = [
+            ("color", {}, (0.0, 0.6, 1.0)),
+            ("size", {"size": str(int(BASE_FONT_SIZE_PT * 1.4 * 1024))}, DEFAULT_HIGHLIGHT_COLOR),
+            ("family", {"font_family": "Courier New"}, DEFAULT_HIGHLIGHT_COLOR),
+            ("weight", {"weight": "bold"}, DEFAULT_HIGHLIGHT_COLOR),
+            ("style", {"style": "italic"}, DEFAULT_HIGHLIGHT_COLOR),
+            ("underline", {"underline": "single"}, DEFAULT_HIGHLIGHT_COLOR),
+            ("strike", {"strikethrough": "true"}, DEFAULT_HIGHLIGHT_COLOR),
+            ("rise", {"rise": "10000"}, DEFAULT_HIGHLIGHT_COLOR),
+        ]
 
+    # Render --------------------------------------------------------------
     for suffix, extra_attrs, color in variants:
         markup = make_markup(sent, phrase, extra_attrs=extra_attrs, highlight_color=color)
-        render(markup, parent / f"{stem}_{suffix}.png")
+        render(markup, output_dir / f"{stem}_{suffix}.png")
 
 
 if __name__ == "__main__":

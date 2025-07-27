@@ -1,0 +1,29 @@
+# Default configuration for pango_feature_demos.py
+
+# Canvas size
+canvas_width: 1920
+canvas_height: 1080
+
+# Wrapping behaviour (0-1 ratio of width)
+wrap_ratio: 0.92
+
+# Colours as RGB floats 0-1
+background_color: [0.2, 0.2, 0.2]
+text_color: [1.0, 1.0, 1.0]
+# Default highlight colour for variants that don’t override
+default_highlight_color: [0.0, 0.6, 1.0]
+
+# Base font
+base_font_family: "Arial"
+base_font_size_pt: 100
+
+# Output directory options
+output_dir: output        # root folder to place renders
+output_dir_mode: timestamped  # "timestamped" or "flat"
+
+# Example of overriding or adding variants. Leave blank to use built-ins.
+# variants:
+#   custom:
+#     extra_attrs:
+#       underline: double
+#     highlight_color: [1.0, 0.0, 0.0]
