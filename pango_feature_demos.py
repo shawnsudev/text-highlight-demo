@@ -91,6 +91,17 @@ def rgb_to_hex(rgb: Tuple[float, float, float]) -> str:
     return "#" + "".join(f"{int(c*255):02x}" for c in rgb)
 
 
+def hsla_to_rgba(hsla: Tuple[float, float, float, float]) -> Tuple[float, float, float, float]:
+    """Convert HSLA (0-1 range) to RGBA.
+
+    HSLA = hue, saturation, lightness, alpha.  We use colorsys.hls_to_rgb
+    which expects hue, lightness, saturation.
+    """
+    h, s, l, a = hsla
+    r, g, b = colorsys.hls_to_rgb(h, l, s)
+    return (r, g, b, a)
+
+
 def make_markup(
     sentence: str,
     phrase: str,
@@ -183,22 +194,22 @@ def main() -> None:
     WRAP_WIDTH = int(CANVAS_WIDTH * WRAP_RATIO)
 
     # --- Background colour --------------------------------------------------
-    if "background_color_hsa" in cfg:
-        BACKGROUND_RGBA = hsa_to_rgba(tuple(cfg["background_color_hsa"]))  # type: ignore[arg-type]
+    if "background_color_hsla" in cfg:
+        BACKGROUND_RGBA = hsla_to_rgba(tuple(cfg["background_color_hsla"]))  # type: ignore[arg-type]
     elif "background_color" in cfg:
         # legacy RGB without alpha → opaque background
         rgb = cfg["background_color"]
         BACKGROUND_RGBA = (rgb[0], rgb[1], rgb[2], 1.0)
 
     # --- Text colour --------------------------------------------------------
-    if "text_color_hsa" in cfg:
-        TEXT_COLOR = hsa_to_rgba(tuple(cfg["text_color_hsa"]))[:3]  # strip alpha → RGB
+    if "text_color_hsla" in cfg:
+        TEXT_COLOR = hsla_to_rgba(tuple(cfg["text_color_hsla"]))[:3]  # strip alpha → RGB
     else:
         TEXT_COLOR = tuple(cfg.get("text_color", TEXT_COLOR))  # type: ignore[arg-type]
 
     # --- Highlight colour ---------------------------------------------------
-    if "default_highlight_color_hsa" in cfg:
-        DEFAULT_HIGHLIGHT_COLOR = hsa_to_rgba(tuple(cfg["default_highlight_color_hsa"]))[:3]
+    if "default_highlight_color_hsla" in cfg:
+        DEFAULT_HIGHLIGHT_COLOR = hsla_to_rgba(tuple(cfg["default_highlight_color_hsla"]))[:3]
     else:
         DEFAULT_HIGHLIGHT_COLOR = tuple(cfg.get("default_highlight_color", DEFAULT_HIGHLIGHT_COLOR))  # type: ignore[arg-type]
     BASE_FONT_FAMILY = cfg.get("base_font_family", BASE_FONT_FAMILY)

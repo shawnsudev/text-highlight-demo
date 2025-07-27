@@ -13,13 +13,13 @@ output_dir_mode: timestamped  # "timestamped" or "flat"
 wrap_ratio: 0.85
 
 
-# 🎨  Colours (HSA 0-1) – hue, saturation, alpha (value fixed at 1)
+# 🎨  Colours (HSLA 0-1) – hue, saturation, lightness, alpha
 # Full transparency background
-background_color_hsa: [0.0, 0.0, 0.0]  # α = 0 → fully transparent
+background_color_hsla: [0.0, 0.0, 0.0, 0.0]  # α = 0 → fully transparent
 # White text
-text_color_hsa: [0.0, 0.0, 1.0]
+text_color_hsla: [0.0, 0.0, 1.0, 1.0]
 # Default highlight colour (cyan-ish) with full opacity
-default_highlight_color_hsa: [0.5, 1.0, 1.0]
+default_highlight_color_hsla: [0.5, 1.0, 0.5, 1.0]
 
 
 # 🖋️  Base font
