@@ -6,6 +6,9 @@ Reads parameters from `config_video.yml` and produces a video that:
 3. Ends with an ease-in fade-out (configurable duration/easing).
 
 FFmpeg is invoked through subprocess; make sure FFmpeg is installed.
+
+Note: Some FFmpeg builds lack the `curve` option on the `fade` filter. We
+therefore omit it for broad compatibility (fade will default to linear).
 """
 from __future__ import annotations
 
@@ -63,12 +66,13 @@ def build_ffmpeg_command(cfg: dict) -> list[str]:
     start_out = duration - fade_out
     vf_parts = [
         f"scale={width}:{height}",
-        f"fade=t=in:st=0:d={fade_in}:alpha=1:curve={easing_in}",
-        f"fade=t=out:st={start_out}:d={fade_out}:alpha=1:curve={easing_out}",
+        f"fade=t=in:st=0:d={fade_in}",
+        f"fade=t=out:st={start_out}:d={fade_out}",
     ]
     vf = ",".join(vf_parts)
 
     cmd = [
+        # Note: `pix_fmt yuva420p` can fail with libx265; removed for robustness.
         "ffmpeg",
         "-y",                   # overwrite output
         "-loop", "1",
@@ -76,7 +80,7 @@ def build_ffmpeg_command(cfg: dict) -> list[str]:
         "-t", str(duration),
         "-vf", vf,
         "-c:v", cfg.get("codec", "libx265"),
-        "-pix_fmt", "yuva420p",  # alpha support (may vary per codec)
+       
         "-r", str(fps),
         out,
     ]

@@ -10,13 +10,13 @@ output_video: "output/final_video.mp4"
 width: 1920
 height: 1080
 fps: 30
-total_duration: 10          # seconds
-fade_in_duration: 1.5       # seconds
-fade_out_duration: 1.5      # seconds
+total_duration: 3          # seconds
+fade_in_duration: 0.5       # seconds
+fade_out_duration: 0.5      # seconds
 
 # Codec settings
 codec: "libx265"
 
 # Easing functions (easein, easeout, easeinout, linear)
-easing_in: "easeout"   # easing for fade-in
-easing_out: "easein"   # easing for fade-out
+easing_in: "easein"   # easing for fade-in
+easing_out: "easeout"   # easing for fade-out
