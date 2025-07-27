@@ -1,0 +1,3 @@
+# Python dependencies for pango_feature_demos.py
+# System libraries (Homebrew) still required: pygobject3, py3cairo
+pycairo>=1.28.0

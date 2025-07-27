@@ -1,0 +1,1 @@
+<span font_family='Arial' foreground='white' size='102400'>Sarah finally saw the light at <span foreground='yellow'>the end of the tunnel</span>, after months of hard work on this challenging project.</span>
