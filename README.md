@@ -47,6 +47,26 @@ python3 pango_feature_demos.py \
 | `_strike`   | `strikethrough` | Strikethrough |
 | `_rise`     | `rise`       | Superscript |
 
+## Transparent-Video Pipeline & Animation
+
+This repo now ships a **one-PNG → WebM with alpha** pipeline powered by FFmpeg.  It provides:
+
+* Fade-in / fade-out animation with configurable easing (linear, ease-in, ease-out…).
+* 8-bit alpha channel preserved (`vp9alpha`) so the clip can be composited over arbitrary footage.
+* YAML-driven config (`config_video.yml`) so duration, resolution and codec can be changed without touching code.
+* Apple-Silicon H.265 hardware-accel fallback (set `hw_accel: true`).
+
+Generate a 3-second demo clip:
+
+```bash
+python3 video_pipeline.py           # uses latest demo_color.png automatically
+open output/final_video.webm        # Chrome shows transparency
+```
+
+See `docs/migration_imagemagick_pipeline.md` for how to plug this module into other projects (e.g. **blender-YT-AI**) via an *Adapter* pattern, letting you switch between the legacy Blender backend and this lightweight ImageMagick backend.
+
+---
+
 ## Do / Don’t for Installation & Configuration
 
 ### ✅ Do
