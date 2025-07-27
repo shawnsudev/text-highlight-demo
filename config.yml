@@ -1,34 +1,52 @@
-# Default configuration for pango_feature_demos.py
+# 🎛️  Configuration for pango_feature_demos.py
 
-# Canvas size
+
+# 🖼️  Canvas size
 canvas_width: 1920
 canvas_height: 1080
 
-# Wrapping behaviour (0-1 ratio of width)
+
+# 🔄  Wrapping behaviour (0-1 ratio of width)
 wrap_ratio: 0.85
 
-# Colours as RGB floats 0-1
+
+# 🎨  Colours (RGB 0-1)
 background_color: [0.2, 0.2, 0.2]
 text_color: [1.0, 1.0, 1.0]
 # Default highlight colour for variants that don’t override
 default_highlight_color: [0.5, 1.0, 1.0]
 
-# Base font
+
+# 🖋️  Base font
 base_font_family: "Arial"
 base_font_size_pt: 50
 
-# Output directory options
+
+# 💾  Output directory
 output_dir: output/demo        # root folder to place renders
 output_dir_mode: timestamped  # "timestamped" or "flat"
 
-# Sentence / highlight defaults
+
+# 📝  Sentence / highlight defaults
 text:
   base: "Sarah finally saw the light at the end of the tunnel, after months of hard work on this challenging project."
   highlight: "the end of the tunnel"
 
-# Example of overriding or adding variants. Leave blank to use built-ins.
+
+# 🧩  Custom variant override example
 # variants:
 #   custom:
 #     extra_attrs:
 #       underline: double
 #     highlight_color: [1.0, 0.0, 0.0]
+
+
+# ⚙️  Built-in variant default values
+color_variant_color: [0.0, 0.6, 1.0]
+size_variant_factor: 1.4
+family_variant_font_family: "Courier New"
+weight_variant_weight: "bold"
+style_variant_style: "italic"
+underline_variant_underline: "single"
+strike_variant_strikethrough: "true"
+rise_variant_rise: 10000

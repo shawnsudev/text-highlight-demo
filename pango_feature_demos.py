@@ -43,15 +43,6 @@ import yaml
 from datetime import datetime
 
 # Canvas/settings – populated from YAML config (initial placeholders)
-CANVAS_WIDTH = 0
-CANVAS_HEIGHT = 0
-WRAP_RATIO = 0.0
-WRAP_WIDTH = 0
-BACKGROUND_COLOR = (0.0, 0.0, 0.0)
-TEXT_COLOR = (1.0, 1.0, 1.0)
-DEFAULT_HIGHLIGHT_COLOR = (0.0, 0.6, 1.0)
-BASE_FONT_FAMILY = "Arial"
-BASE_FONT_SIZE_PT = 12
 CANVAS_WIDTH: int
 CANVAS_HEIGHT: int
 WRAP_RATIO: float
@@ -61,6 +52,35 @@ TEXT_COLOR: Tuple[float, float, float]
 DEFAULT_HIGHLIGHT_COLOR: Tuple[float, float, float]
 BASE_FONT_FAMILY: str
 BASE_FONT_SIZE_PT: int
+COLOR_VARIANT_COLOR: Tuple[float, float, float]
+SIZE_VARIANT_FACTOR: float
+FAMILY_VARIANT_FONT: str
+WEIGHT_VARIANT_WEIGHT: str
+STYLE_VARIANT_STYLE: str
+UNDERLINE_VARIANT_UNDERLINE: str
+STRIKE_VARIANT_STRIKETHROUGH: str
+RISE_VARIANT_RISE: int
+
+# ---------------------------------------------------------------------------
+# Default initial values (used before YAML config is applied)
+CANVAS_WIDTH = 1920
+CANVAS_HEIGHT = 1080
+WRAP_RATIO = 0.85
+WRAP_WIDTH = int(CANVAS_WIDTH * WRAP_RATIO)
+BACKGROUND_COLOR = (0.2, 0.2, 0.2)
+TEXT_COLOR = (1.0, 1.0, 1.0)
+DEFAULT_HIGHLIGHT_COLOR = (0.5, 1.0, 1.0)
+BASE_FONT_FAMILY = "Arial"
+BASE_FONT_SIZE_PT = 50
+COLOR_VARIANT_COLOR = (0.0, 0.6, 1.0)
+SIZE_VARIANT_FACTOR = 1.4
+FAMILY_VARIANT_FONT = "Courier New"
+WEIGHT_VARIANT_WEIGHT = "bold"
+STYLE_VARIANT_STYLE = "italic"
+UNDERLINE_VARIANT_UNDERLINE = "single"
+STRIKE_VARIANT_STRIKETHROUGH = "true"
+RISE_VARIANT_RISE = 10000
+# ---------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------
@@ -166,6 +186,16 @@ def main() -> None:
     BASE_FONT_FAMILY = cfg.get("base_font_family", BASE_FONT_FAMILY)
     BASE_FONT_SIZE_PT = cfg.get("base_font_size_pt", BASE_FONT_SIZE_PT)
 
+    COLOR_VARIANT_COLOR = tuple(cfg.get("color_variant_color", (0.0, 0.6, 1.0)))  # type: ignore[arg-type]
+    SIZE_VARIANT_FACTOR = cfg.get("size_variant_factor", 1.4)
+
+    FAMILY_VARIANT_FONT = cfg.get("family_variant_font_family", "Courier New")
+    WEIGHT_VARIANT_WEIGHT = cfg.get("weight_variant_weight", "bold")
+    STYLE_VARIANT_STYLE = cfg.get("style_variant_style", "italic")
+    UNDERLINE_VARIANT_UNDERLINE = cfg.get("underline_variant_underline", "single")
+    STRIKE_VARIANT_STRIKETHROUGH = cfg.get("strike_variant_strikethrough", "true")
+    RISE_VARIANT_RISE = cfg.get("rise_variant_rise", 10000)
+
     # Determine output directory -----------------------------------------
     output_root = Path(cfg.get("output_dir", "output"))
     mode = cfg.get("output_dir_mode", "timestamped")
@@ -197,14 +227,14 @@ def main() -> None:
             variants.append((suffix, extra_attrs, color))
     else:
         variants = [
-            ("color", {}, (0.0, 0.6, 1.0)),
-            ("size", {"size": str(int(BASE_FONT_SIZE_PT * 1.4 * 1024))}, DEFAULT_HIGHLIGHT_COLOR),
-            ("family", {"font_family": "Courier New"}, DEFAULT_HIGHLIGHT_COLOR),
-            ("weight", {"weight": "bold"}, DEFAULT_HIGHLIGHT_COLOR),
-            ("style", {"style": "italic"}, DEFAULT_HIGHLIGHT_COLOR),
-            ("underline", {"underline": "single"}, DEFAULT_HIGHLIGHT_COLOR),
-            ("strike", {"strikethrough": "true"}, DEFAULT_HIGHLIGHT_COLOR),
-            ("rise", {"rise": "10000"}, DEFAULT_HIGHLIGHT_COLOR),
+            ("color", {}, COLOR_VARIANT_COLOR),
+            ("size", {"size": str(int(BASE_FONT_SIZE_PT * SIZE_VARIANT_FACTOR * 1024))}, DEFAULT_HIGHLIGHT_COLOR),
+            ("family", {"font_family": FAMILY_VARIANT_FONT}, DEFAULT_HIGHLIGHT_COLOR),
+            ("weight", {"weight": WEIGHT_VARIANT_WEIGHT}, DEFAULT_HIGHLIGHT_COLOR),
+            ("style", {"style": STYLE_VARIANT_STYLE}, DEFAULT_HIGHLIGHT_COLOR),
+            ("underline", {"underline": UNDERLINE_VARIANT_UNDERLINE}, DEFAULT_HIGHLIGHT_COLOR),
+            ("strike", {"strikethrough": STRIKE_VARIANT_STRIKETHROUGH}, DEFAULT_HIGHLIGHT_COLOR),
+            ("rise", {"rise": str(RISE_VARIANT_RISE)}, DEFAULT_HIGHLIGHT_COLOR),
         ]
 
     # Render --------------------------------------------------------------
