@@ -42,7 +42,16 @@ from gi.repository import Pango, PangoCairo  # type: ignore
 import yaml
 from datetime import datetime
 
-# Canvas/settings – populated from YAML config
+# Canvas/settings – populated from YAML config (initial placeholders)
+CANVAS_WIDTH = 0
+CANVAS_HEIGHT = 0
+WRAP_RATIO = 0.0
+WRAP_WIDTH = 0
+BACKGROUND_COLOR = (0.0, 0.0, 0.0)
+TEXT_COLOR = (1.0, 1.0, 1.0)
+DEFAULT_HIGHLIGHT_COLOR = (0.0, 0.6, 1.0)
+BASE_FONT_FAMILY = "Arial"
+BASE_FONT_SIZE_PT = 12
 CANVAS_WIDTH: int
 CANVAS_HEIGHT: int
 WRAP_RATIO: float
@@ -74,12 +83,14 @@ def make_markup(
     start = sentence.index(phrase)
     end = start + len(phrase)
 
-    base_span_open = f"<span font_family='{BASE_FONT_FAMILY}' size='{int(font_size_pt*1024)}' foreground='{rgb_to_hex(TEXT_COLOR)}'>"
+
 
     if highlight_color is None:
         highlight_color = DEFAULT_HIGHLIGHT_COLOR
     if font_size_pt is None:
         font_size_pt = BASE_FONT_SIZE_PT
+
+    base_span_open = f"<span font_family='{BASE_FONT_FAMILY}' size='{int(font_size_pt*1024)}' foreground='{rgb_to_hex(TEXT_COLOR)}'>"
 
     attrs = {
         "foreground": rgb_to_hex(highlight_color),
