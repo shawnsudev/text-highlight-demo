@@ -16,7 +16,7 @@ echo "==> Installing Homebrew packages: ${BREW_PKGS[*]}"
 brew install "${BREW_PKGS[@]}"
 
 echo "==> Installing Python packages from requirements.txt"
-python3 -m pip install -U pip
+python3 -m pip install --break-system-packages -U pip
 python3 -m pip install --break-system-packages -r "$(dirname "$0")/requirements.txt"
 
 echo "All dependencies installed. Run pango_feature_demos.py to generate images."
