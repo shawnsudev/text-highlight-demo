@@ -19,6 +19,22 @@ python3 pango_feature_demos.py \
   --basename demo
 ```
 
+## Why Cairo + Pango instead of Blender VSE?
+
+### Pros
+- **Pixel-perfect text layout** using Pango’s typography engine (proper kerning, shaping, word-wrapping) – VSE text strip is very limited.
+- **Programmatic generation**: run headless on CI or server; no Blender GUI required.
+- **Full inline styling** via markup (`size`, `family`, `weight`, `color`, etc.).
+- **Lightweight dependencies** (Cairo, Pango) vs. full Blender install.
+- **Faster iteration** when you just need 2-D text images.
+
+### Cons
+- No built-in timeline/key-frame UI – you must script any animation yourself (e.g. loop 30 frames and vary opacity).
+- No 3-D text extrusion or advanced compositor effects that Blender offers.
+- Requires a small amount of Python/GTK knowledge, whereas VSE can be used entirely through its UI.
+
+---
+
 ## Pango-Markup Features Demonstrated
 | File suffix | Attribute(s) | Effect |
 |-------------|--------------|--------|
