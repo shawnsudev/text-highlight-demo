@@ -60,7 +60,14 @@ def rgb_to_hex(rgb: Tuple[float, float, float]) -> str:
     return "#" + "".join(f"{int(c*255):02x}" for c in rgb)
 
 
-def make_markup(sentence: str, phrase: str, *, extra_attrs: Dict[str, str] | None = None, highlight_color: Tuple[float, float, float] = DEFAULT_HIGHLIGHT_COLOR, font_size_pt: float = BASE_FONT_SIZE_PT) -> str:
+def make_markup(
+    sentence: str,
+    phrase: str,
+    *,
+    extra_attrs: Dict[str, str] | None = None,
+    highlight_color: Tuple[float, float, float] | None = None,
+    font_size_pt: float | None = None,
+) -> str:
     if phrase not in sentence:
         raise ValueError("highlight phrase not found in sentence")
 
@@ -68,6 +75,11 @@ def make_markup(sentence: str, phrase: str, *, extra_attrs: Dict[str, str] | Non
     end = start + len(phrase)
 
     base_span_open = f"<span font_family='{BASE_FONT_FAMILY}' size='{int(font_size_pt*1024)}' foreground='{rgb_to_hex(TEXT_COLOR)}'>"
+
+    if highlight_color is None:
+        highlight_color = DEFAULT_HIGHLIGHT_COLOR
+    if font_size_pt is None:
+        font_size_pt = BASE_FONT_SIZE_PT
 
     attrs = {
         "foreground": rgb_to_hex(highlight_color),
