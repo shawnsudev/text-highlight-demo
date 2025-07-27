@@ -70,16 +70,19 @@ def build_ffmpeg_command(cfg: dict) -> list[str]:
     easing_out = EASING_MAP.get(cfg.get("easing_out", "linear"), "linear")
 
     # Build filter string
-    start_out = duration - fade_out
+    # Start fade-out one frame earlier to ensure opacity hits 0 on last frame
+    start_out = duration - fade_out - (1.0 / fps)
     vf_parts = [
         f"scale={width}:{height}",
-        f"fade=t=in:st=0:d={fade_in}",
-        f"fade=t=out:st={start_out}:d={fade_out}",
+        f"fade=t=in:st=0:d={fade_in}:alpha=1",
+        f"fade=t=out:st={start_out}:d={fade_out}:alpha=1",
     ]
     vf = ",".join(vf_parts)
 
     codec = cfg.get("codec", "libx265")
-    if use_hw:
+    if codec == "vp9alpha":
+        codec = "libvpx-vp9"
+    if use_hw and codec == "libx265":
         codec = "hevc_videotoolbox"
 
     cmd = [
@@ -91,6 +94,7 @@ def build_ffmpeg_command(cfg: dict) -> list[str]:
         "-t", str(duration),
         "-vf", vf,
         "-c:v", codec,
+        "-pix_fmt", "yuva420p",
        
         "-r", str(fps),
         out,

@@ -2,10 +2,10 @@
 
 # Source PNG (produced by 📄pango_feature_demos.py)
 # Use absolute/relative path or the special value "auto" to pick the most recent demo_color.png
-png_path: "auto"
+png_path: "auto" 
 
 # Output video
-output_video: "output/final_video.mp4"
+output_video: "output/final_video.webm"
 
 # Video properties
 width: 1920
@@ -16,7 +16,7 @@ fade_in_duration: 0.5       # seconds
 fade_out_duration: 0.5      # seconds
 
 # Codec settings
-codec: "libx265"
+codec: "vp9alpha"
 
 # Easing functions (easein, easeout, easeinout, linear)
 easing_in: "easein"   # easing for fade-in
