@@ -5,3 +5,8 @@
 # Output directories
 output/
 demo/
+
+# Python cache
+__pycache__
+*.pyc
+
