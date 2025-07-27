@@ -37,7 +37,16 @@ def run_cmd(cmd: list[str]) -> None:
 
 def build_ffmpeg_command(cfg: dict) -> list[str]:
     """Construct FFmpeg CLI from config values."""
-    png = str((ROOT / cfg["png_path"]).expanduser())
+    png_cfg = cfg["png_path"]
+    png_path = (ROOT / png_cfg).expanduser()
+    if not png_path.exists():
+        # auto-discover latest demo_color.png under output/
+        candidates = sorted((ROOT / "output").rglob("demo_color.png"), key=lambda p: p.stat().st_mtime, reverse=True)
+        if not candidates:
+            raise FileNotFoundError(f"PNG not found: {png_cfg} and no candidates under output/")
+        png_path = candidates[0]
+        print(f"⚠️ Using discovered PNG: {png_path.relative_to(ROOT)}")
+    png = str(png_path)
     out = str((ROOT / cfg["output_video"]).expanduser())
 
     width = cfg.get("width")
