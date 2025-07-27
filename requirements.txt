@@ -2,3 +2,5 @@
 # System libraries (Homebrew) still required: pygobject3, py3cairo
 pycairo>=1.28.0
 PyYAML>=6.0
+manim==0.17.3
+ffmpeg-python>=0.2.0
