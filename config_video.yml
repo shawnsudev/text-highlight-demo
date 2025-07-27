@@ -1,7 +1,8 @@
-# 🏗️ Video pipeline configuration for manim + ffmpeg
+# 🏗️ Video pipeline configuration for ffmpeg
 
-# Source PNG (transparent background, highlighted text)
-png_path: "output/demo/demo_color.png"  # update path if necessary
+# Source PNG (produced by 📄pango_feature_demos.py)
+# Use absolute/relative path or the special value "auto" to pick the most recent demo_color.png
+png_path: "auto"
 
 # Output video
 output_video: "output/final_video.mp4"

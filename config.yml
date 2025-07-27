@@ -5,16 +5,21 @@
 canvas_width: 1920
 canvas_height: 1080
 
+# 💾  Output directory
+output_dir: output/demo        # root folder to place renders
+output_dir_mode: timestamped  # "timestamped" or "flat"
 
 # 🔄  Wrapping behaviour (0-1 ratio of width)
 wrap_ratio: 0.85
 
 
-# 🎨  Colours (RGB 0-1)
-background_color: [0.2, 0.2, 0.2]
-text_color: [1.0, 1.0, 1.0]
-# Default highlight colour for variants that don’t override
-default_highlight_color: [0.5, 1.0, 1.0]
+# 🎨  Colours (HSA 0-1) – hue, saturation, alpha (value fixed at 1)
+# Full transparency background
+background_color_hsa: [0.0, 0.0, 0.0]  # α = 0 → fully transparent
+# White text
+text_color_hsa: [0.0, 0.0, 1.0]
+# Default highlight colour (cyan-ish) with full opacity
+default_highlight_color_hsa: [0.5, 1.0, 1.0]
 
 
 # 🖋️  Base font
@@ -22,9 +27,6 @@ base_font_family: "Arial"
 base_font_size_pt: 50
 
 
-# 💾  Output directory
-output_dir: output/demo        # root folder to place renders
-output_dir_mode: timestamped  # "timestamped" or "flat"
 
 
 # 📝  Sentence / highlight defaults
@@ -43,7 +45,7 @@ text:
 
 # ⚙️  Built-in variant default values
 color_variant_color: [0.0, 0.6, 1.0]
-size_variant_factor: 1.4
+size_variant_factor: 1.7
 family_variant_font_family: "Courier New"
 weight_variant_weight: "bold"
 style_variant_style: "italic"

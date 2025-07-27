@@ -39,6 +39,11 @@ def run_cmd(cmd: list[str]) -> None:
 
 
 def build_ffmpeg_command(cfg: dict) -> list[str]:
+    """Construct FFmpeg CLI from config values.
+
+    If `hw_accel` is true in the YAML and running on macOS/Apple Silicon, we
+    switch codec to `hevc_videotoolbox` for hardware-accelerated encoding.
+    """
     """Construct FFmpeg CLI from config values."""
     png_cfg = cfg["png_path"]
     png_path = (ROOT / png_cfg).expanduser()
@@ -51,6 +56,8 @@ def build_ffmpeg_command(cfg: dict) -> list[str]:
         print(f"⚠️ Using discovered PNG: {png_path.relative_to(ROOT)}")
     png = str(png_path)
     out = str((ROOT / cfg["output_video"]).expanduser())
+
+    use_hw = bool(cfg.get("hw_accel", False))
 
     width = cfg.get("width")
     height = cfg.get("height")
@@ -71,6 +78,10 @@ def build_ffmpeg_command(cfg: dict) -> list[str]:
     ]
     vf = ",".join(vf_parts)
 
+    codec = cfg.get("codec", "libx265")
+    if use_hw:
+        codec = "hevc_videotoolbox"
+
     cmd = [
         # Note: `pix_fmt yuva420p` can fail with libx265; removed for robustness.
         "ffmpeg",
@@ -79,7 +90,7 @@ def build_ffmpeg_command(cfg: dict) -> list[str]:
         "-i", png,
         "-t", str(duration),
         "-vf", vf,
-        "-c:v", cfg.get("codec", "libx265"),
+        "-c:v", codec,
        
         "-r", str(fps),
         out,

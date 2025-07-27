@@ -33,6 +33,7 @@ from typing import Dict, Tuple
 
 import cairo  # type: ignore
 import gi  # type: ignore
+import colorsys
 
 gi.require_version("Pango", "1.0")
 
@@ -67,7 +68,8 @@ CANVAS_WIDTH = 1920
 CANVAS_HEIGHT = 1080
 WRAP_RATIO = 0.85
 WRAP_WIDTH = int(CANVAS_WIDTH * WRAP_RATIO)
-BACKGROUND_COLOR = (0.2, 0.2, 0.2)
+# RGBA for background (alpha allows transparency)
+BACKGROUND_RGBA = (0.0, 0.0, 0.0, 0.0)  # default fully transparent
 TEXT_COLOR = (1.0, 1.0, 1.0)
 DEFAULT_HIGHLIGHT_COLOR = (0.5, 1.0, 1.0)
 BASE_FONT_FAMILY = "Arial"
@@ -136,7 +138,7 @@ def render(markup: str, output: Path) -> None:
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, CANVAS_WIDTH, CANVAS_HEIGHT)
     ctx = cairo.Context(surface)
 
-    ctx.set_source_rgb(*BACKGROUND_COLOR)
+    ctx.set_source_rgba(*BACKGROUND_RGBA)
     ctx.paint()
 
     layout = PangoCairo.create_layout(ctx)
@@ -172,7 +174,7 @@ def main() -> None:
 
     # Apply config overrides to globals -----------------------------------
     global CANVAS_WIDTH, CANVAS_HEIGHT, WRAP_RATIO, WRAP_WIDTH
-    global BACKGROUND_COLOR, TEXT_COLOR, DEFAULT_HIGHLIGHT_COLOR
+    global BACKGROUND_RGBA, TEXT_COLOR, DEFAULT_HIGHLIGHT_COLOR
     global BASE_FONT_FAMILY, BASE_FONT_SIZE_PT
 
     CANVAS_WIDTH = cfg.get("canvas_width", CANVAS_WIDTH)
@@ -180,9 +182,25 @@ def main() -> None:
     WRAP_RATIO = cfg.get("wrap_ratio", WRAP_RATIO)
     WRAP_WIDTH = int(CANVAS_WIDTH * WRAP_RATIO)
 
-    BACKGROUND_COLOR = tuple(cfg.get("background_color", BACKGROUND_COLOR))  # type: ignore[arg-type]
-    TEXT_COLOR = tuple(cfg.get("text_color", TEXT_COLOR))  # type: ignore[arg-type]
-    DEFAULT_HIGHLIGHT_COLOR = tuple(cfg.get("default_highlight_color", DEFAULT_HIGHLIGHT_COLOR))  # type: ignore[arg-type]
+    # --- Background colour --------------------------------------------------
+    if "background_color_hsa" in cfg:
+        BACKGROUND_RGBA = hsa_to_rgba(tuple(cfg["background_color_hsa"]))  # type: ignore[arg-type]
+    elif "background_color" in cfg:
+        # legacy RGB without alpha → opaque background
+        rgb = cfg["background_color"]
+        BACKGROUND_RGBA = (rgb[0], rgb[1], rgb[2], 1.0)
+
+    # --- Text colour --------------------------------------------------------
+    if "text_color_hsa" in cfg:
+        TEXT_COLOR = hsa_to_rgba(tuple(cfg["text_color_hsa"]))[:3]  # strip alpha → RGB
+    else:
+        TEXT_COLOR = tuple(cfg.get("text_color", TEXT_COLOR))  # type: ignore[arg-type]
+
+    # --- Highlight colour ---------------------------------------------------
+    if "default_highlight_color_hsa" in cfg:
+        DEFAULT_HIGHLIGHT_COLOR = hsa_to_rgba(tuple(cfg["default_highlight_color_hsa"]))[:3]
+    else:
+        DEFAULT_HIGHLIGHT_COLOR = tuple(cfg.get("default_highlight_color", DEFAULT_HIGHLIGHT_COLOR))  # type: ignore[arg-type]
     BASE_FONT_FAMILY = cfg.get("base_font_family", BASE_FONT_FAMILY)
     BASE_FONT_SIZE_PT = cfg.get("base_font_size_pt", BASE_FONT_SIZE_PT)
 
